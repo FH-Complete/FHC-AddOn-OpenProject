@@ -36,7 +36,8 @@ class REST
         'text/json'         => 'json',
         'text/csv'          => 'csv',
         'application/csv'   => 'csv',
-        'application/vnd.php.serialized' => 'serialize'
+        'application/vnd.php.serialized' => 'serialize',
+        'application/hal+json' => 'json'
     );
 
     protected $rest_server;
