@@ -2,28 +2,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['openproject'] = [
-	'url' => '',
+	'server' => '',
 	'api_key' => '',
-	'api_path' => 'api/v3/',
+	'api_path' => '/api/v3/',
 
 	// work package type mapping
 	// can be set from the config fontend
 	'type_mapping' => [
 		'Arbeitspaket' => [
-			"href" => "",
-			"title" => ""
+			'href' => '',
+			'title' => ''
 		],
 		'Milestone' => [
-			"href" => "",
-			"title" => ""
+			'href' => '',
+			'title' => ''
 		],
 		'Task' => [
-			"href" => "",
-			"title" => ""
+			'href' => '',
+			'title' => ''
 		],
 		'Projektphase' => [
-			"href" => "",
-			"title" => ""
+			'href' => '',
+			'title' => ''
 		],
 	],
 
