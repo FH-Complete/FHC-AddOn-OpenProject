@@ -27,6 +27,17 @@ $config['openproject'] = [
 		],
 	],
 
+	'status_mapping' => [
+		'new' => [
+			'href' => '',
+			'title' => ''
+		],
+		'closed' => [
+			'href' => '',
+			'title' => ''
+		]
+	],
+
 	// default modules for new projects
 	// comment out to disable
 	'default_modules' => [

@@ -102,6 +102,10 @@ class Workpackage {
 
 	public function setResponsible($id)
 	{
+		if (is_null($id))
+		{
+			return $this;
+		}
 		$this->responsible = $id;
 
 		$user = $this->CI->user_model->get($id);

@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
- * OpenProject User
+ * OpenProject Workpackage
  */
 class Workpackage_model extends FHCOP_Model {
 
@@ -48,7 +48,35 @@ class Workpackage_model extends FHCOP_Model {
 
 		$result = $this->rest->postJSON("projects/$wp->projectID/work_packages", $data);
 
+		if (!property_exists($result, 'id'))
+		{
+			print_r($result);
+		}
+
 		return property_exists($result, 'id') ? $result->id : null;
+	}
+
+	public function set_parent($id, $parentID)
+	{
+		$workPackage = $this->rest->get("work_packages/{$id}");
+
+		if (!property_exists($workPackage, 'id'))
+		{
+			// work package does not exists
+			return;
+		}
+
+		$api_path = $this->config->item('openproject')['api_path'];
+
+		$data = [
+			"lockVersion" => $workPackage->lockVersion,
+			"_links" => [
+				"parent" => [
+					"href" => "{$api_path}work_packages/{$parentID}"
+				]
+			]
+		];
+		$this->rest->patch("work_packages/{$id}", json_encode($data), 'json');
 	}
 
 }
