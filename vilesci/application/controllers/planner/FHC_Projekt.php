@@ -7,8 +7,7 @@ class FHC_Projekt extends FHCOP_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->database('fhcomplete');
-        $this->load->model('planner/FHC_Projekt_Model', 'ProjektModel');
+        $this->load->model('planner/projekt_model', 'ProjektModel');
     }
 
     public function projekt($projekt_kurzbz)

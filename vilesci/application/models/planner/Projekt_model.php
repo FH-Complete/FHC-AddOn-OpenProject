@@ -1,11 +1,13 @@
 <?php
-class FHC_Projekt_Model extends FHCOP_Model
+class Projekt_model extends FHCOP_Model
 {
     const CLEANUP = true;
+    private $fhc; // Database Object
 
     public function __construct()
     {
         parent::__construct();
+        $this->fhc = $this->load->database('fhcomplete', true);
     }
     public function load($id)
     {
@@ -33,7 +35,7 @@ class FHC_Projekt_Model extends FHCOP_Model
 
     private function fetch($table, $attr, $val)
     {
-        return $this->cleanup($this->db->get_where("fue.tbl_".$table, array($attr => $val))->result());
+        return $this->cleanup($this->fhc->get_where("fue.tbl_".$table, array($attr => $val))->result());
     }
 
     private function fetchRes(&$obj)
