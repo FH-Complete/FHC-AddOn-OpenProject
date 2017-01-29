@@ -305,6 +305,10 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 
+
+
+require_once '../../../config/global.config.inc.php';
+require_once '../../../config/vilesci.config.inc.php';
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
@@ -314,5 +318,3 @@ switch (ENVIRONMENT)
  */
 require_once BASEPATH.'core/CodeIgniter.php';
 
-require_once '../../../config/global.config.inc.php';
-require_once '../../../config/vilesci.config.inc.php';
