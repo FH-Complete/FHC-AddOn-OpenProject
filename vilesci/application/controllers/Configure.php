@@ -36,8 +36,13 @@ class Configure extends FHCOP_Controller
             return;
         }
 
-        //TODO json_last_error() ?
         $config = json_decode(file_get_contents($config_path), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE)
+        {
+            echo 'Config file contains invalid JSON.';
+            return;
+        }
 
 
         // Fetch OpenProject work package types
