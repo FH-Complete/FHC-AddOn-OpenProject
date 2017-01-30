@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 ?>
 <html>
 <head>
@@ -10,50 +10,72 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </head>
 <body>
 <div class="container">
-    <form method="post">
+    <form class="form-horizontal" method="post">
         <div class="form-group row">
             <label class="col-2 col-form-label">URL:</label>
-            <input class="form-control" name="url" type="text" value="{url}">
+            <input class="form-control" name="url" type="text" value="<?php echo $config['server'] ?>">
         </div>
         <div class="form-group row">
             <label class="col-2 col-form-label">Api-Key:</label>
-            <input class="form-control" name="apikey" type="text" value="{api_key}">
-        </div>
-        <div class="form-group row">
-            <label class="col-2 col-form-label">Api-Path:</label>
-            <input class="form-control" name="apipath" type="text" value="{api_path}">
-
-        </div>
-        <div class="form-group row">
-            <label for="workpackage">Select type for Arbeitspakete:</label>
-            <select class="form-control" name="workpackage">
-                {options1}
-            </select>
-        </div>
-        <div class="form-group row">
-            <label for="milestone">Select type for Milestone:</label>
-            <select class="form-control" name="milestone">
-                {options2}
-            </select>
-        </div>
-        <div class="form-group row">
-            <label for="task">Select type for Task:</label>
-            <select class="form-control" name="task">
-                {options3}
-            </select>
-        </div>
-        <div class="form-group row">
-            <label for="projectphase">Select type for Projektphase:</label>
-            <select class="form-control" name="projectphase">
-                {options4}
-            </select>
+            <input class="form-control" name="api_key" type="text" value="<?php echo $config['api_key'] ?>">
         </div>
 
-        <button class="btn btn-primary" type="submit" >Config updaten</button>
+        <br>
 
+        <legend>
+            <label>Work package type mapping</label>
+        </legend>
+
+        <div class="form-group">
+            <div class="col-sm-2">FH Complete</div>
+            <div class="col-sm-8">OpenProject</div>
+        </div>
+
+        <?php foreach(['Arbeitspaket', 'Milestone', 'Task', 'Projektphase'] as $key_type): ?>
+            <div class="form-group">
+                <label for="workpackage" class="col-sm-2 control-label"><?php echo $key_type ?></label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="<?php echo $key_type ?>">
+                        <?php foreach (array_keys($types) as $type): ?>
+                            <option <?php echo $config['type_mapping'][$key_type]['title'] == $type ? 'selected':'' ?> >
+                                <?php echo $type ?>
+                            </option>';
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            </div>
+        <?php endforeach ?>
+
+        <br>
+
+        <legend>
+            <label>Status mapping</label>
+        </legend>
+
+        <div class="form-group">
+            <div class="col-sm-2">FH Complete</div>
+            <div class="col-sm-8">OpenProject</div>
+        </div>
+
+        <?php foreach(['new', 'closed'] as $key_status): ?>
+            <div class="form-group">
+                <label for="workpackage" class="col-sm-2 control-label"><?php echo $key_status ?></label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="<?php echo $key_status ?>">
+                        <?php foreach (array_keys($statuses) as $status): ?>
+                            <option <?php echo $config['status_mapping'][$key_status]['title'] == $status ? 'selected':'' ?> >
+                                <?php echo $status ?>
+                            </option>';
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            </div>
+        <?php endforeach ?>
+
+        <button class="btn btn-primary" type="submit">Update</button>
 
     </form>
-    {alert}
+    <?php echo $alert ?>
 </div>
 </body>
 </html>

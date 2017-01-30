@@ -1,18 +1,23 @@
 <?php
 
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
-class FHCOP_Model extends CI_Model {
+class FHCOP_Model extends CI_Model
+{
 
 	public $result;
 
-	function __construct() {
+    /**
+     * FHCOP_Model constructor.
+     */
+	public function __construct()
+    {
 		parent::__construct();
 
 		$this->load->library('rest');
 
 		$config = $this->config->item('openproject');
-		$url = rtrim($config['server'], '/') . $config['api_path'];
+		$url = rtrim($config['server'], '/').$config['api_path'];
 
 		$rest_config = [
 			'server' => $url,
@@ -25,8 +30,26 @@ class FHCOP_Model extends CI_Model {
 
 		$this->rest->initialize($rest_config);
 
-        $json_file = file_get_contents(getcwd() . "/application/config/openproject.json");
+
+		$prod_path = APPPATH.'config/openproject.json';
+		$dev_path = APPPATH.'config/development/openproject.json';
+
+		if (file_exists($dev_path))
+		{
+			$config_path = $dev_path;
+		}
+		elseif (file_exists($prod_path))
+		{
+			$config_path = $prod_path;
+		}
+		else
+		{
+			echo 'No config file found found!';
+			return;
+		}
+
+        $config = json_decode(file_get_contents($config_path), true);
         $this->config->load('openproject');
-        $this->config->set_item('openproject', json_decode($json_file, true));
+        $this->config->set_item('openproject', $config);
 	}
 }

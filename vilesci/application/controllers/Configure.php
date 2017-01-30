@@ -1,102 +1,107 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 class Configure extends FHCOP_Controller
 {
 
+    private $permitted_post_parameter = ['url', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed'];
 
+    /**
+     * Configure constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     *
+     */
     public function index()
     {
-        $res = $this->rest->get('types');
-        $this->load->helper("url");
+        $prod_path = APPPATH.'config/openproject.json';
+        $dev_path = APPPATH.'config/development/openproject.json';
 
-        $json_file = file_get_contents(getcwd() . "/application/config/openproject.json");
-
-        $json_data = json_decode($json_file, true);
-
-
-        $curl=curl_init();
-        curl_setopt($curl, CURLOPT_URL, "http://fhcop-inf.technikum-wien.at/openproject/api/v3/types/");
-        curl_setopt($curl, CURLOPT_USERPWD,
-        'apikey:4b3de1532078925f0f6c652feeddae25659cd30b'
-        );
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $curldata=curl_exec($curl);
-        $curljson=json_decode($curldata,TRUE);
-        $wpTypeArray=array();
-        foreach ($curljson['_embedded']['elements']as $key=> $value){
-            $wpTypeArray[$value['_links']['self']['title']]=$value['_links']['self']['href'];
+        if (file_exists($dev_path))
+        {
+            $config_path = $dev_path;
         }
-        $wpTypes=array_keys($wpTypeArray);
-        $options1="";
-        $options2="";
-        $options3="";
-        $options4="";
-        foreach (array_keys($wpTypeArray) as $value){
-            $options1=$options1.'<option'.($json_data['type_mapping']['Arbeitspaket']['title']==$value?' selected="selected"':'').'>' .$value.'</option>';
-            $options2=$options2.'<option'.($json_data['type_mapping']['Milestone']['title']==$value?' selected="selected"':'').'>' .$value.'</option>';
-            $options3=$options3.'<option'.($json_data['type_mapping']['Task']['title']==$value?' selected="selected"':'').'>' .$value.'</option>';
-            $options4=$options4.'<option'.($json_data['type_mapping']['Projektphase']['title']==$value?' selected="selected"':'').'>' .$value.'</option>';
+        elseif (file_exists($prod_path))
+        {
+            $config_path = $prod_path;
         }
-$alert="";
-        curl_close($curl);
-        if ($this->input->server('REQUEST_METHOD') == 'POST') {
-            foreach ($_POST as $key => $value) {
-                switch ($key) {
-                    case 'url':
-                        $json_data["server"]=$value;
-                        break;
-                    case 'api_key':
-                        $json_data["api_key"]=$value;
-                        break;
-                    case 'api_path':
-                        $json_data["api_path"]=$value;
-                        break;
-                    case 'workpackage':
-                        if(in_array($value,$wpTypes)) {
-                            $json_data['type_mapping']['Arbeitspaket']['title'] = $value;
-                            $json_data['type_mapping']['Arbeitspaket']['href'] = $wpTypeArray[$value];
-                        }
-                            break;
-                    case 'milestone':
-                        if(in_array($value,$wpTypes)) {
-                            $json_data['type_mapping']['Milestone']['title'] = $value;
-                            $json_data['type_mapping']['Milestone']['href'] = $wpTypeArray[$value];
-                        }
-                        break;
-                    case 'task':
-                        if(in_array($value,$wpTypes)) {
-                            $json_data['type_mapping']['Task']['title'] = $value;
-                            $json_data['type_mapping']['Task']['href'] = $wpTypeArray[$value];
-                        }
-                        break;
-                    case 'projectphase':
-                        if(in_array($value,$wpTypes)) {
-                            $json_data['type_mapping']['Projektphase']['title'] = $value;
-                            $json_data['type_mapping']['Projektphase']['href'] = $wpTypeArray[$value];
-                        }
-                        break;
+        else
+        {
+            echo 'No config file found found!';
+            return;
+        }
+
+        //TODO json_last_error() ?
+        $config = json_decode(file_get_contents($config_path), true);
+
+
+        // Fetch OpenProject work package types
+        $result = $this->rest->get('types');
+        $types_objects = $result->_embedded->elements;
+
+        $types = [];
+
+        foreach ($types_objects as $type_object)
+        {
+            $types[$type_object->_links->self->title] = $type_object->_links->self->href;
+        }
+
+        // Fetch OpenProject statuses
+        $result = $this->rest->get('statuses');
+        $status_objects = $result->_embedded->elements;
+
+        $statuses = [];
+
+        foreach ($status_objects as $status_object)
+        {
+            $statuses[$status_object->_links->self->title] = $status_object->_links->self->href;
+        }
+
+
+        $alert = "";
+
+        if ($this->input->server('REQUEST_METHOD') == 'POST')
+        {
+            foreach ($_POST as $key => $value)
+            {
+                if (!in_array($key, $this->permitted_post_parameter))
+                {
+                    break;
                 }
 
+                if (isset($config[$key]))
+                {
+                    $config[$key] = $value;
+                }
+
+                if (isset($config['type_mapping'][$key]))
+                {
+                    $config['type_mapping'][$key]['title'] = $value;
+                    $config['type_mapping'][$key]['href'] = $types[$value];
+                }
+
+                if (isset($config['status_mapping'][$key]))
+                {
+                    $config['status_mapping'][$key]['title'] = $value;
+                    $config['status_mapping'][$key]['href'] = $statuses[$value];
+                }
             }
 
-            file_put_contents(getcwd() . "/application/config/openproject.json", json_encode($json_data,JSON_UNESCAPED_SLASHES),LOCK_EX);
-            $alert='<div class="alert alert-success"> <strong>Success!</strong> Your settings are saved, please refresh this page to see the changes!.</div>';
-        }
-        $this->load->library('parser');
-        $data = array(
-            'url' => $json_data["server"],
-            'api_key' => $json_data["api_key"],
-            'api_path' => $json_data["api_path"],
-            'options1' => $options1,
-            'options2' => $options2,
-            'options3' => $options3,
-            'options4' => $options4,
-            'alert' => $alert
-        );
-        $this->parser->parse('configure', $data);
-
+            file_put_contents($config_path, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
+            $alert = '<div class="alert alert-success"> <strong>Success!</strong> Your settings have been saved!</div>';
         }
 
-
+        $data = [
+            'alert' => $alert,
+            'config' => $config,
+            'types' => $types,
+            'statuses' => $statuses,
+        ];
+        $this->load->view('configure', $data);
+    }
 }

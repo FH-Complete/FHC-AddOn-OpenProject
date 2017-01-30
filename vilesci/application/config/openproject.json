@@ -1,1 +1,59 @@
-{"server":"http://fhcop-inf.technikum-wien.at/openproject","api_key":"56c65da735a37f0fbdf970ee5794e93123e1031f","api_path":"/api/v3/","type_mapping":{"Arbeitspaket":{"href":"/openproject/api/v3/types/2","title":"Milestone"},"Milestone":{"href":"/openproject/api/v3/types/2","title":"Milestone"},"Task":{"href":"/openproject/api/v3/types/1","title":"Task"},"Projektphase":{"href":"/openproject/api/v3/types/7","title":"Bug"}},"status_mapping":{"new":{"href":"/openproject/api/v3/statuses/1","title":"New"},"closed":{"href":"/openproject/api/v3/statuses/13","title":"Closed"}},"role_mapping":{"member":{"id":4,"name":"Member"},"admin":{"id":3,"name":"Project admin"}},"default_modules":["work_package_tracking","time_tracking","news","wiki","repository","boards","calendar","timelines","documents","costs_module","reporting_module","meetings","backlogs","activity"]}
+{
+    "server": "",
+    "api_key": "",
+    "api_path": "/api/v3/",
+    "type_mapping": {
+        "Arbeitspaket": {
+            "href": "",
+            "title": ""
+        },
+        "Milestone": {
+            "href": "",
+            "title": ""
+        },
+        "Task": {
+            "href": "",
+            "title": ""
+        },
+        "Projektphase": {
+            "href": "",
+            "title": ""
+        }
+    },
+    "status_mapping": {
+        "new": {
+            "href": "",
+            "title": ""
+        },
+        "closed": {
+            "href": "",
+            "title": ""
+        }
+    },
+    "role_mapping": {
+        "member": {
+            "id": 4,
+            "name": "Member"
+        },
+        "admin": {
+            "id": 3,
+            "name": "Project admin"
+        }
+    },
+    "default_modules": [
+        "work_package_tracking",
+        "time_tracking",
+        "news",
+        "wiki",
+        "repository",
+        "boards",
+        "calendar",
+        "timelines",
+        "documents",
+        "costs_module",
+        "reporting_module",
+        "meetings",
+        "backlogs",
+        "activity"
+    ]
+}
