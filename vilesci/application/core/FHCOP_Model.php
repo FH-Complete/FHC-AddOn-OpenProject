@@ -24,5 +24,9 @@ class FHCOP_Model extends CI_Model {
 		];
 
 		$this->rest->initialize($rest_config);
+
+        $json_file = file_get_contents(getcwd() . "/application/config/openproject.json");
+        $this->config->load('openproject');
+        $this->config->set_item('openproject', json_decode($json_file, true));
 	}
 }
