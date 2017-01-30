@@ -131,5 +131,7 @@ class Sync extends FHCOP_Controller
                 $this->WorkPackageModel->set_parent($phasen_map[$phase->projektphase_id], $phasen_map[$phase->projektphase_fk]);
             }
         }
+
+        $this->_responseJSON(['success' => true]);
     }
 }
