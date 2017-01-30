@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
-class Workpackage {
+class Workpackage
+{
 
 	private $subject;		//*
 	private $description;	//*
@@ -22,7 +23,9 @@ class Workpackage {
 	private $CI;
 	const PERSON_DAYS_IN_HOURS = 8;
 
-
+    /**
+     * Workpackage constructor.
+     */
 	public function __construct()
 	{
 		$this->CI = &get_instance();
@@ -30,6 +33,12 @@ class Workpackage {
 		$this->CI->load->model('openproject/user_model');
 	}
 
+    /**
+     * Returns a property
+     *
+     * @param string $property property to be returned
+     * @return mixed specified property
+     */
 	public function __get($property)
 	{
 		if (property_exists($this, $property))
@@ -38,18 +47,36 @@ class Workpackage {
 		}
 	}
 
+    /**
+     * Sets the subject
+     *
+     * @param string $subject subject
+     * @return $this Returns the Workpackage object
+     */
 	public function setSubject($subject)
 	{
 		$this->subject = $subject;
 		return $this;
 	}
 
+    /**
+     * Sets the description
+     *
+     * @param string $description description
+     * @return $this Returns the Workpackage object
+     */
 	public function setDescription($description)
 	{
 		$this->description = $description;
 		return $this;
 	}
 
+    /**
+     * Sets the type
+     *
+     * @param string $type type
+     * @return $this Returns the Workpackage object
+     */
 	public function setType($type)
 	{
 		$this->type = $type;
@@ -58,16 +85,24 @@ class Workpackage {
 		return $this;
 	}
 
+    /**
+     * Sets the Project ID
+     *
+     * @param int|string $projectID project id
+     * @return $this Returns the Workpackage object
+     */
 	public function setProjectID($projectID)
 	{
 		$this->projectID = $projectID;
 		return $this;
 	}
 
-	/*
-	 * Sets a status and statusResource.
-	 * Valid statuses: ["new", "closed"]
-	 */
+    /**
+     * Sets a status and statusResource.
+     *
+     * @param string $status Valid statuses: ["new", "closed"]
+     * @return $this Returns the Workpackage object
+     */
 	public function setStatus($status)
 	{
 		$this->status = $status;
@@ -94,12 +129,24 @@ class Workpackage {
 		return $this;
 	}
 
+    /**
+     * Sets the cost
+     *
+     * @param object $costObject cost
+     * @return $this Returns the Workpackage object
+     */
 	public function setCostObject($costObject)
 	{
 		$this->costObject = $costObject;
 		return $this;
 	}
 
+    /**
+     * Sets a user as responsible for this work package
+     *
+     * @param string $id UID of the responsible user
+     * @return $this Returns the Workpackage object
+     */
 	public function setResponsible($id)
 	{
 		if (is_null($id))
@@ -138,6 +185,12 @@ class Workpackage {
 		return $this;
 	}
 
+    /**
+     * Sets the parent of this work package
+     *
+     * @param int $id ID of the parent
+     * @return $this Returns the Workpackage object
+     */
 	public function setParent($id)
 	{
 		$api_path = $this->CI->config->item('openproject')['api_path'];

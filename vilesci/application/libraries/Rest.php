@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 /**
  * CodeIgniter REST Class
@@ -57,17 +57,25 @@ class REST
     protected $send_cookies = null;
     protected $response_string;
 
-    function __construct($config = array())
+    /**
+     * REST constructor.
+     *
+     * @param array $config configuration
+     */
+    public function __construct($config = array())
     {
         $this->_ci =& get_instance();
 
         $this->_ci->load->library('curl');
 
         // If a URL was passed to the library
-        empty($config) OR $this->initialize($config);
+        empty($config) || $this->initialize($config);
     }
 
-    function __destruct()
+    /**
+     * REST destructor.
+     */
+    public function __destruct()
     {
         $this->_ci->curl->set_defaults();
     }
@@ -79,6 +87,8 @@ class REST
      * @author  Phil Sturgeon
      * @author  Chris Kacerguis
      * @version 1.0
+     *
+     * @param array $config configuration
      */
     public function initialize($config)
     {
@@ -100,7 +110,6 @@ class REST
 
         isset($config['ssl_verify_peer']) && $this->ssl_verify_peer = $config['ssl_verify_peer'];
         isset($config['ssl_cainfo']) && $this->ssl_cainfo = $config['ssl_cainfo'];
-
     }
 
     /**
@@ -110,14 +119,14 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function get($uri, $params = array(), $format = NULL)
+    public function get($uri, $params = array(), $format = null)
     {
         if ($params)
         {
             $uri .= '?'.(is_array($params) ? http_build_query($params) : $params);
         }
 
-        return $this->_call('get', $uri, NULL, $format);
+        return $this->_call('get', $uri, null, $format);
     }
 
     /**
@@ -127,16 +136,17 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function post($uri, $params = array(), $format = NULL)
+    public function post($uri, $params = array(), $format = null)
     {
         return $this->_call('post', $uri, $params, $format);
     }
 
     /**
+     * Returns the request as json
 	 *
-	 * @param type $uri
-	 * @param type $params
-	 * @return type
+	 * @param type $uri URI of the post request
+	 * @param type $params params for the post request
+	 * @return type returns the encoded request as json
 	 */
 	public function postJson($uri, $params = array())
 	{
@@ -150,7 +160,7 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function put($uri, $params = array(), $format = NULL)
+    public function put($uri, $params = array(), $format = null)
     {
         return $this->_call('put', $uri, $params, $format);
     }
@@ -162,7 +172,7 @@ class REST
      * @author  Dmitry Serzhenko
      * @version 1.0
      */
-    public function patch($uri, $params = array(), $format = NULL)
+    public function patch($uri, $params = array(), $format = null)
     {
         return $this->_call('patch', $uri, $params, $format);
     }
@@ -174,7 +184,7 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function delete($uri, $params = array(), $format = NULL)
+    public function delete($uri, $params = array(), $format = null)
     {
         return $this->_call('delete', $uri, $params, $format);
     }
@@ -186,15 +196,14 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function api_key($key, $name = FALSE)
+    public function api_key($key, $name = false)
     {
         $this->api_key  = $key;
 
-        if ($name !== FALSE)
+        if ($name !== false)
         {
             $this->api_name = $name;
         }
-
     }
 
     /**
@@ -233,9 +242,9 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    protected function _call($method, $uri, $params = array(), $format = NULL)
+    protected function _call($method, $uri, $params = array(), $format = null)
     {
-        if ($format !== NULL)
+        if ($format !== null)
         {
             $this->format($format);
         }
@@ -248,14 +257,14 @@ class REST
 
         // If using ssl set the ssl verification value and cainfo
         // contributed by: https://github.com/paulyasi
-        if ($this->ssl_verify_peer === FALSE)
+        if ($this->ssl_verify_peer === false)
         {
-            $this->_ci->curl->ssl(FALSE);
+            $this->_ci->curl->ssl(false);
         }
-        elseif ($this->ssl_verify_peer === TRUE)
+        elseif ($this->ssl_verify_peer === true)
         {
-            $this->ssl_cainfo = getcwd() . $this->ssl_cainfo;
-            $this->_ci->curl->ssl(TRUE, 2, $this->ssl_cainfo);
+            $this->ssl_cainfo = getcwd().$this->ssl_cainfo;
+            $this->_ci->curl->ssl(true, 2, $this->ssl_cainfo);
         }
 
         // If authentication is enabled use it
@@ -273,9 +282,7 @@ class REST
         // Send cookies with curl
         if ($this->send_cookies != '')
         {
-
-            $this->_ci->curl->set_cookies( $_COOKIE );
-
+            $this->_ci->curl->set_cookies($_COOKIE);
         }
 
         // Set the Content-Type (contributed by https://github.com/eriklharper)
@@ -283,7 +290,7 @@ class REST
 
 
         // We still want the response even if there is an error code over 400
-        $this->_ci->curl->option('failonerror', FALSE);
+        $this->_ci->curl->option('failonerror', false);
 
         // Call the correct method with parameters
         $this->_ci->curl->{$method}($params);
@@ -363,7 +370,6 @@ class REST
         echo "<pre>";
         print_r($this->_ci->curl->info);
         echo "</pre>";
-
     }
 
 
@@ -374,9 +380,9 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    // Return HTTP status code
     public function status()
     {
+        // Return HTTP status code
         return $this->info('http_code');
     }
 
@@ -403,7 +409,6 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    //
     public function option($code, $value)
     {
         $this->_ci->curl->option($code, $value);
@@ -416,7 +421,7 @@ class REST
      * @author  Phil Sturgeon
      * @version 1.0
      */
-    public function http_header($header, $content = NULL)
+    public function http_header($header, $content = null)
     {
         // Did they use a single argument or two?
         $params = $content ? array($header, $content) : array($header);
@@ -472,7 +477,7 @@ class REST
      */
     protected function _xml($string)
     {
-        return $string ? (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
+        return $string ? (array)simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
     }
 
     /**
@@ -492,7 +497,7 @@ class REST
         // Splits
         $rows = explode("\n", trim($string));
         $headings = explode(',', array_shift($rows));
-        foreach( $rows as $row )
+        foreach ($rows as $row)
         {
             // The substr removes " from start and end
             $data_fields = explode('","', trim(substr($row, 1, -1)));
@@ -501,7 +506,6 @@ class REST
             {
                 $data[] = array_combine($headings, $data_fields);
             }
-
         }
 
         return $data;
@@ -551,7 +555,6 @@ class REST
         eval("\$populated = \"$string\";");
         return $populated;
     }
-
 }
 
 /* End of file REST.php */

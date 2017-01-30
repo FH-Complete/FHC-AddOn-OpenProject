@@ -1,13 +1,17 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 /*
  * OpenProject Project
  */
-class Project_model extends CI_Model {
+class Project_model extends CI_Model
+{
 
 	public $project_id;
 
+    /**
+     * Project_model constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
@@ -15,6 +19,14 @@ class Project_model extends CI_Model {
 		$this->load->model('openproject/user_model');
 	}
 
+    /**
+     * Creates an openproject project in the database
+     *
+     * @param string $identifier identifier for the openproject project
+     * @param string $name name of the openproject project
+     * @param string $description description of the openproject project
+     * @return int the id of the created openproject project
+     */
 	public function insert($identifier, $name, $description)
 	{
 		$this->db->select_max('rgt');
@@ -34,8 +46,8 @@ class Project_model extends CI_Model {
 			'identifier' => $identifier,
 			'status' => 1,
 			'is_public' => false,
-			'lft' => $max_rgt+1,
-			'rgt' => $max_rgt+2,
+			'lft' => $max_rgt + 1,
+			'rgt' => $max_rgt + 2,
 		]);
 		$this->db->set('created_on', 'now()');
 		$this->db->set('updated_on', 'now()');
@@ -46,8 +58,8 @@ class Project_model extends CI_Model {
 			$this->project_id = $this->db->insert_id();
 
 			// all modules and types have to be enabled manually
-			$this->enable_modules($this->project_id);
-			$this->enable_all_types($this->project_id);
+			$this->__enable_modules($this->project_id);
+			$this->__enable_all_types($this->project_id);
 		}
 
 		return $success ? $this->project_id : -1;
@@ -59,7 +71,7 @@ class Project_model extends CI_Model {
 	 * Will add a user to a project or do nothing if he is already added.
 	 * Expects the attribute $this->project_id to be set.
 	 */
-	public function add_user($login, $admin=false)
+	public function add_user($login, $admin = false)
 	{
 		//TODO add FHC <-> OP role mapping?
 		//     update roles if user is already added?
@@ -99,7 +111,7 @@ class Project_model extends CI_Model {
 	 * Enables the modules for a project
 	 * The config is found in openproject.php
 	 */
-	private function enable_modules($project_id)
+	private function __enable_modules($project_id)
 	{
 		$modules = $this->config->item('openproject')['default_modules'];
 
@@ -116,7 +128,7 @@ class Project_model extends CI_Model {
 	/**
 	 * Enables all available types of work packages for a project
 	 */
-	private function enable_all_types($project_id)
+	private function __enable_all_types($project_id)
 	{
 		$query = $this->db->get('types');
 
@@ -128,5 +140,4 @@ class Project_model extends CI_Model {
 			]);
 		}
 	}
-
 }

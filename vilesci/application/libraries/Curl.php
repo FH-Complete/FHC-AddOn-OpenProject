@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * CodeIgniter Curl Class
@@ -28,12 +28,12 @@ class Curl
 	{
 		$this->_ci = & get_instance();
 
-		if ( ! $this->is_enabled())
+		if (! $this->is_enabled())
 		{
 			log_message('error', 'cURL Class - PHP was not built with cURL enabled. Rebuild PHP with --with-curl to use cURL.');
 		}
 
-		$url AND $this->create($url);
+		$url and $this->create($url);
 	}
 
 	public function __call($method, $arguments)
@@ -58,7 +58,7 @@ class Curl
 		if ($method === 'get')
 		{
 			// If a URL is provided, create new session
-			$this->create($url.($params ? '?'.http_build_query($params, NULL, '&') : ''));
+			$this->create($url.($params ? '?'.http_build_query($params, null, '&') : ''));
 		}
 
 		else
@@ -78,7 +78,7 @@ class Curl
 	public function simple_ftp_get($url, $file_path, $username = '', $password = '')
 	{
 		// If there is no ftp:// or any protocol entered, add ftp://
-		if ( ! preg_match('!^(ftp|sftp)://! i', $url))
+		if (! preg_match('!^(ftp|sftp)://! i', $url))
 		{
 			$url = 'ftp://' . $url;
 		}
@@ -100,8 +100,8 @@ class Curl
 		// Add the filepath
 		$url .= $file_path;
 
-		$this->option(CURLOPT_BINARYTRANSFER, TRUE);
-		$this->option(CURLOPT_VERBOSE, TRUE);
+		$this->option(CURLOPT_BINARYTRANSFER, true);
+		$this->option(CURLOPT_VERBOSE, true);
 
 		return $this->execute();
 	}
@@ -116,7 +116,7 @@ class Curl
 		// If its an array (instead of a query string) then format it correctly
 		if (is_array($params))
 		{
-			$params = http_build_query($params, NULL, '&');
+			$params = http_build_query($params, null, '&');
 		}
 
 		// Add in the specific options provided
@@ -124,7 +124,7 @@ class Curl
 
 		$this->http_method('post');
 
-		$this->option(CURLOPT_POST, TRUE);
+		$this->option(CURLOPT_POST, true);
 		$this->option(CURLOPT_POSTFIELDS, $params);
 	}
 
@@ -133,7 +133,7 @@ class Curl
 		// If its an array (instead of a query string) then format it correctly
 		if (is_array($params))
 		{
-			$params = http_build_query($params, NULL, '&');
+			$params = http_build_query($params, null, '&');
 		}
 
 		// Add in the specific options provided
@@ -151,7 +151,7 @@ class Curl
 		// If its an array (instead of a query string) then format it correctly
 		if (is_array($params))
 		{
-			$params = http_build_query($params, NULL, '&');
+			$params = http_build_query($params, null, '&');
 		}
 
 		// Add in the specific options provided
@@ -169,7 +169,7 @@ class Curl
 		// If its an array (instead of a query string) then format it correctly
 		if (is_array($params))
 		{
-			$params = http_build_query($params, NULL, '&');
+			$params = http_build_query($params, null, '&');
 		}
 
 		// Add in the specific options provided
@@ -184,14 +184,14 @@ class Curl
 	{
 		if (is_array($params))
 		{
-			$params = http_build_query($params, NULL, '&');
+			$params = http_build_query($params, null, '&');
 		}
 
 		$this->option(CURLOPT_COOKIE, $params);
 		return $this;
 	}
 
-	public function http_header($header, $content = NULL)
+	public function http_header($header, $content = null)
 	{
 		$this->headers[] = $content ? $header . ': ' . $content : $header;
 		return $this;
@@ -212,7 +212,7 @@ class Curl
 
 	public function proxy($url = '', $port = 80)
 	{
-		$this->option(CURLOPT_HTTPPROXYTUNNEL, TRUE);
+		$this->option(CURLOPT_HTTPPROXYTUNNEL, true);
 		$this->option(CURLOPT_PROXY, $url . ':' . $port);
 		return $this;
 	}
@@ -223,11 +223,11 @@ class Curl
 		return $this;
 	}
 
-	public function ssl($verify_peer = TRUE, $verify_host = 2, $path_to_cert = NULL)
+	public function ssl($verify_peer = true, $verify_host = 2, $path_to_cert = null)
 	{
 		if ($verify_peer)
 		{
-			$this->option(CURLOPT_SSL_VERIFYPEER, TRUE);
+			$this->option(CURLOPT_SSL_VERIFYPEER, true);
 			$this->option(CURLOPT_SSL_VERIFYHOST, $verify_host);
 			if (isset($path_to_cert)) {
 				$path_to_cert = realpath($path_to_cert);
@@ -236,7 +236,7 @@ class Curl
 		}
 		else
 		{
-			$this->option(CURLOPT_SSL_VERIFYPEER, FALSE);
+			$this->option(CURLOPT_SSL_VERIFYPEER, false);
 			$this->option(CURLOPT_SSL_VERIFYHOST, $verify_host);
 		}
 		return $this;
@@ -271,7 +271,7 @@ class Curl
 	public function create($url)
 	{
 		// If no a protocol in URL, assume its a CI link
-		if ( ! preg_match('!^\w+://! i', $url))
+		if (! preg_match('!^\w+://! i', $url))
 		{
 			$this->_ci->load->helper('url');
 			$url = site_url($url);
@@ -287,30 +287,30 @@ class Curl
 	public function execute()
 	{
 		// Set two default options, and merge any extra ones in
-		if ( ! isset($this->options[CURLOPT_TIMEOUT]))
+		if (! isset($this->options[CURLOPT_TIMEOUT]))
 		{
 			$this->options[CURLOPT_TIMEOUT] = 30;
 		}
-		if ( ! isset($this->options[CURLOPT_RETURNTRANSFER]))
+		if (! isset($this->options[CURLOPT_RETURNTRANSFER]))
 		{
-			$this->options[CURLOPT_RETURNTRANSFER] = TRUE;
+			$this->options[CURLOPT_RETURNTRANSFER] = true;
 		}
-		if ( ! isset($this->options[CURLOPT_FAILONERROR]))
+		if (! isset($this->options[CURLOPT_FAILONERROR]))
 		{
-			$this->options[CURLOPT_FAILONERROR] = TRUE;
+			$this->options[CURLOPT_FAILONERROR] = true;
 		}
 
 		// Only set follow location if not running securely
-		if ( ! ini_get('safe_mode') && ! ini_get('open_basedir'))
+		if (! ini_get('safe_mode') && ! ini_get('open_basedir'))
 		{
 			// Ok, follow location is not set already so lets set it to true
-			if ( ! isset($this->options[CURLOPT_FOLLOWLOCATION]))
+			if (! isset($this->options[CURLOPT_FOLLOWLOCATION]))
 			{
-				$this->options[CURLOPT_FOLLOWLOCATION] = TRUE;
+				$this->options[CURLOPT_FOLLOWLOCATION] = true;
 			}
 		}
 
-		if ( ! empty($this->headers))
+		if (! empty($this->headers))
 		{
 			$this->option(CURLOPT_HTTPHEADER, $this->headers);
 		}
@@ -322,7 +322,7 @@ class Curl
 		$this->info = curl_getinfo($this->session);
 
 		// Request failed
-		if ($this->response === FALSE)
+		if ($this->response === false)
 		{
 			$errno = curl_errno($this->session);
 			$error = curl_error($this->session);
@@ -333,7 +333,7 @@ class Curl
 			$this->error_code = $errno;
 			$this->error_string = $error;
 
-			return FALSE;
+			return false;
 		}
 
 		// Request successful
@@ -386,11 +386,10 @@ class Curl
 		$this->response = '';
 		$this->headers = array();
 		$this->options = array();
-		$this->error_code = NULL;
+		$this->error_code = null;
 		$this->error_string = '';
-		$this->session = NULL;
+		$this->session = null;
 	}
-
 }
 
 /* End of file Curl.php */

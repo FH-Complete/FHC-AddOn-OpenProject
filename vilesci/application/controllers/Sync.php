@@ -26,7 +26,7 @@ class Sync extends FHCOP_Controller
     {
         if (!isset($_GET['projekt_kurzbz']))
         {
-            $this->responseError('MISSING_PARAM', 'projekt_kurzbz', 'GET Parameter is missing.');
+            $this->_responseError('MISSING_PARAM', 'projekt_kurzbz', 'GET Parameter is missing.');
             return;
         }
 
@@ -36,8 +36,9 @@ class Sync extends FHCOP_Controller
         $projekt = $this->DataModel->load($_GET['projekt_kurzbz']);
 
         // Check if FHComplete Projekt exists
-        if (is_array($projekt)) {
-            $this-responseError('NOT_FOUND', 'projekt_kurzbz', $projekt['error']);
+        if (is_array($projekt))
+        {
+            $this->_responseError('NOT_FOUND', 'projekt_kurzbz', $projekt['error']);
             return;
         }
 
@@ -54,14 +55,19 @@ class Sync extends FHCOP_Controller
         // Exit if users are missings
         if (count($missing_users) !== 0 && !(isset($_GET['user_check']) && $_GET['user_check'] === 'false'))
         {
-            $this->responseError('MISSING_USERS', $missing_users, 'Not all Users have been created in OpenProject. Use GET Parameter \'user_check=false\' to ignore this error.', 409);
+            $this->_responseError(
+                'MISSING_USERS',
+                $missing_users,
+                'Not all Users have been created in OpenProject. Use GET Parameter \'user_check=false\' to ignore this error.',
+                409
+            );
             return;
         }
 
         // Create OP Project
-        if(($project_id = $this->ProjectModel->insert($projekt->projekt_kurzbz, $projekt->titel, $projekt->beschreibung)) === -1)
+        if (($project_id = $this->ProjectModel->insert($projekt->projekt_kurzbz, $projekt->titel, $projekt->beschreibung)) === -1)
         {
-            $this->responseError('CANNOT_CREATE', 'Project', 'Error when inserting Project, it might exist already.');
+            $this->_responseError('CANNOT_CREATE', 'Project', 'Error when inserting Project, it might exist already.');
             return;
         }
 
@@ -79,7 +85,7 @@ class Sync extends FHCOP_Controller
         // Creating all Workpackages OP from Projektphasen/Tasks FHC
         $this->load->library('workpackage');
 
-        foreach($projekt->projektphasen as $phase)
+        foreach ($projekt->projektphasen as $phase)
         {
             $wp_phase = new Workpackage();
             $wp_phase->SetSubject($phase->bezeichnung)
@@ -90,7 +96,7 @@ class Sync extends FHCOP_Controller
                 ->setProjectID($project_id)
                 ->setStartDate($phase->start)
                 ->setDueDate($phase->ende);
-            if(!in_array($phase->ressource_id, $missing_users))
+            if (!in_array($phase->ressource_id, $missing_users))
             {
                 $wp_phase->setResponsible($phase->ressource_id);
             }
@@ -98,7 +104,7 @@ class Sync extends FHCOP_Controller
             // Maps OP workpackage id to FHC projektphase_id
             $phasen_map[$phase->projektphase_id] = $this->WorkPackageModel->create($wp_phase);
 
-            foreach($phase->projekttasks as $task)
+            foreach ($phase->projekttasks as $task)
             {
                 $wp_task = new Workpackage();
                 $wp_task->SetSubject($task->bezeichnung)
@@ -109,7 +115,7 @@ class Sync extends FHCOP_Controller
                     ->setType('Task')
                     ->setProjectID($project_id)
                     ->setDueDate($task->ende);
-                if(!in_array($task->ressource_id, $missing_users))
+                if (!in_array($task->ressource_id, $missing_users))
                 {
                     $wp_task->setResponsible($task->ressource_id);
                 }
@@ -118,9 +124,9 @@ class Sync extends FHCOP_Controller
         }
 
         // Patch OP Workpackages to include parent phasen
-        foreach($projekt->projektphasen as $phase)
+        foreach ($projekt->projektphasen as $phase)
         {
-            if(!is_null($phase->projektphase_fk))
+            if (!is_null($phase->projektphase_fk))
             {
                 $this->WorkPackageModel->set_parent($phasen_map[$phase->projektphase_id], $phasen_map[$phase->projektphase_fk]);
             }

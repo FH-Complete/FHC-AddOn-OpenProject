@@ -1,9 +1,12 @@
 <?php
 
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 class FHCOP_Controller extends CI_Controller
 {
+    /**
+     * FHCOP_Controller constructor.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -11,7 +14,7 @@ class FHCOP_Controller extends CI_Controller
 		$this->load->library('rest');
 
 		$config = $this->config->item('openproject');
-		$url = rtrim($config['server'], '/') . $config['api_path'];
+		$url = rtrim($config['server'], '/').$config['api_path'];
 
 		$rest_config = [
 			'server' => $url,
@@ -25,14 +28,27 @@ class FHCOP_Controller extends CI_Controller
 		$this->rest->initialize($rest_config);
     }
 
-    protected function responseJSON($content)
+    /**
+     * Sets the content type to JSON and outsputs the content
+     *
+     * @param string $content Content to be displayed as JSON.
+     */
+    protected function _responseJSON($content)
     {
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode($content));
     }
 
-    protected function responseError($errorCode, $message, $description, $statusCode = 400)
+    /**
+     * Sets the content type to JSON and outputs an error
+     *
+     * @param int $errorCode Error code.
+     * @param string $message Error message (what is wrong).
+     * @param string $description Error description (how to fix it).
+     * @param int $statusCode HTTP status code.
+     */
+    protected function _responseError($errorCode, $message, $description, $statusCode = 400)
     {
         $this->output->set_status_header($statusCode);
         $this->responseJSON(["error" => ["code" => $errorCode, "value" => $message, "description" => $description]]);
