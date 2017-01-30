@@ -46,7 +46,7 @@ class User_model extends FHCOP_Model
             $user = $result->_embedded->elements[0];
 
             $this->cache[$id] = [
-			'id' => $user->id,
+            'id' => $user->id,
             'login' => $user->login,
             'name' => $user->name,
             'resource' => $user->_links->self->href,
