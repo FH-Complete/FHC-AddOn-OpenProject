@@ -4,19 +4,19 @@ defined('BASEPATH') || exit('No direct script access allowed');
 class Workpackage
 {
 
-	private $subject;		//*
-	private $description;	//*
-	private $type;			//*
-	private $typeResource;	//*
-	private $projectID;		//*
-	private $status;		//*
-	private $statusResource;//*
-	private $startDate;		//*
-	private $dueDate;		//*
+	private $subject;
+	private $description;
+	private $type;
+	private $typeResource;
+	private $projectID;
+	private $status;
+	private $statusResource;
+	private $startDate;
+	private $dueDate;
 	private $costObject;
-	private $responsible;	//*
-	private $responsibleResource; //*
-	private $estimatedTime;	//*
+	private $responsible;
+	private $responsibleResource;
+	private $estimatedTime;
 	private $parent;
 	private $parentResource;
 
@@ -98,7 +98,7 @@ class Workpackage
 	}
 
     /**
-     * Sets a status and statusResource.
+     * Sets status and statusResource.
      *
      * @param string $status Valid statuses: ["new", "closed"]
      * @return $this Returns the Workpackage object
