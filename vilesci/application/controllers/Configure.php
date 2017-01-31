@@ -4,7 +4,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 class Configure extends FHCOP_Controller
 {
 
-    private $permitted_post_parameter = ['url', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed'];
+    private $permitted_post_parameter = ['url', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed', 'member', 'admin'];
 
     /**
      * Configure constructor.
@@ -12,6 +12,8 @@ class Configure extends FHCOP_Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->load->database('openproject');
     }
 
     /**
@@ -45,28 +47,9 @@ class Configure extends FHCOP_Controller
         }
 
 
-        // Fetch OpenProject work package types
-        $result = $this->rest->get('types');
-        $types_objects = $result->_embedded->elements;
-
-        $types = [];
-
-        foreach ($types_objects as $type_object)
-        {
-            $types[$type_object->_links->self->title] = $type_object->_links->self->href;
-        }
-
-        // Fetch OpenProject statuses
-        $result = $this->rest->get('statuses');
-        $status_objects = $result->_embedded->elements;
-
-        $statuses = [];
-
-        foreach ($status_objects as $status_object)
-        {
-            $statuses[$status_object->_links->self->title] = $status_object->_links->self->href;
-        }
-
+        $types = $this->__getTypes();
+        $roles = $this->__getRoles();
+        $statuses = $this->__getStatuses();
 
         $alert = "";
 
@@ -95,6 +78,12 @@ class Configure extends FHCOP_Controller
                     $config['status_mapping'][$key]['title'] = $value;
                     $config['status_mapping'][$key]['href'] = $statuses[$value];
                 }
+
+                if (isset($config['role_mapping'][$key]))
+                {
+                    $config['role_mapping'][$key]['name'] = $value;
+                    $config['role_mapping'][$key]['id'] = $roles[$value];
+                }
             }
 
             file_put_contents($config_path, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
@@ -106,7 +95,73 @@ class Configure extends FHCOP_Controller
             'config' => $config,
             'types' => $types,
             'statuses' => $statuses,
+            'roles' => $roles,
         ];
         $this->load->view('configure', $data);
+    }
+
+    /**
+     * Returns the open project work package type.
+     *
+     * Fetches the statuss from the OpenProject API.
+     *
+     * @return array with type => resource
+     */
+    private function __getTypes()
+    {
+        $types = [];
+
+        $result = $this->rest->get('types');
+        $types_objects = $result->_embedded->elements;
+
+        foreach ($types_objects as $type_object)
+        {
+            $types[$type_object->_links->self->title] = $type_object->_links->self->href;
+        }
+
+        return $types;
+    }
+
+    /**
+     * Returns the open project statuses.
+     *
+     * Fetches the statuses from the OpenProject API.
+     *
+     * @return array with status => resource
+     */
+    private function __getStatuses()
+    {
+        $result = $this->rest->get('statuses');
+        $status_objects = $result->_embedded->elements;
+
+        $statuses = [];
+
+        foreach ($status_objects as $status_object)
+        {
+            $statuses[$status_object->_links->self->title] = $status_object->_links->self->href;
+        }
+
+        return $statuses;
+    }
+
+    /**
+     * Returns the open project roles.
+     *
+     * Fetches the roles from the OpenProject database.
+     *
+     * @return array with role => id
+     */
+    private function __getRoles()
+    {
+        $query = $this->db->get_where('roles', ['assignable' => true]);
+
+        $roles = [];
+
+        foreach ($query->result() as $role)
+        {
+            $roles[$role->name] = $role->id;
+        }
+
+        return $roles;
     }
 }

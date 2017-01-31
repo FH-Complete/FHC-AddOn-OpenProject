@@ -57,13 +57,13 @@ defined('BASEPATH') || exit('No direct script access allowed');
             <div class="col-sm-8">OpenProject</div>
         </div>
 
-        <?php foreach(['new', 'closed'] as $key_status): ?>
+        <?php foreach(['new', 'closed'] as $status_key): ?>
             <div class="form-group">
-                <label for="workpackage" class="col-sm-2 control-label"><?php echo $key_status ?></label>
+                <label for="workpackage" class="col-sm-2 control-label"><?php echo $status_key ?></label>
                 <div class="col-sm-10">
-                    <select class="form-control" name="<?php echo $key_status ?>">
+                    <select class="form-control" name="<?php echo $status_key ?>">
                         <?php foreach (array_keys($statuses) as $status): ?>
-                            <option <?php echo $config['status_mapping'][$key_status]['title'] == $status ? 'selected':'' ?> >
+                            <option <?php echo $config['status_mapping'][$status_key]['title'] == $status ? 'selected':'' ?> >
                                 <?php echo $status ?>
                             </option>';
                         <?php endforeach ?>
@@ -72,6 +72,31 @@ defined('BASEPATH') || exit('No direct script access allowed');
             </div>
         <?php endforeach ?>
 
+        <br>
+
+        <legend>
+            <label>Role mapping</label>
+        </legend>
+
+        <div class="form-group">
+            <div class="col-sm-2">FH Complete</div>
+            <div class="col-sm-8">OpenProject</div>
+        </div>
+
+        <?php foreach(['member', 'admin'] as $role_key): ?>
+            <div class="form-group">
+                <label for="workpackage" class="col-sm-2 control-label"><?php echo $role_key ?></label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="<?php echo $role_key ?>">
+                        <?php foreach (array_keys($roles) as $role): ?>
+                            <option <?php echo $config['role_mapping'][$role_key]['name'] == $role ? 'selected':'' ?> >
+                                <?php echo $role ?>
+                            </option>';
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            </div>
+        <?php endforeach ?>
         <button class="btn btn-primary" type="submit">Update</button>
 
     </form>
