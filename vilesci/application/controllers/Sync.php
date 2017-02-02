@@ -2,6 +2,9 @@
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once('../../../include/authentication.class.php');
+require_once('../../../include/benutzerberechtigung.class.php');
+
 /**
  * Syncs FHC Projekt to OP Projekt.
  */
@@ -29,7 +32,6 @@ class Sync extends FHCOP_Controller
             $this->_responseError('MISSING_PARAM', 'projekt_kurzbz', 'GET Parameter is missing.');
             return;
         }
-
         // http://fhcop-inf.technikum-wien.at/fhcomplete/addons/openproject/vilesci/index.dist.php/planner/FHC_Projekt/projekt/TestProjekt
         // /\-- JSON of TestProjekt
         // Load FHComplete Projekt
@@ -39,6 +41,12 @@ class Sync extends FHCOP_Controller
         if (is_array($projekt))
         {
             $this->_responseError('NOT_FOUND', 'projekt_kurzbz', $projekt['error']);
+            return;
+        }
+
+        if (!$this->__has_permission())
+        {
+            $this->_responseError('ACCESS_DENIED', '', 'You must be an admin or a project member of '.$_GET['projekt_kurzbz']);
             return;
         }
 
@@ -133,5 +141,36 @@ class Sync extends FHCOP_Controller
         }
 
         $this->_responseJSON(['success' => true]);
+    }
+
+
+    private function __has_permission()
+    {
+        $uid = (new authentication())->getUser();
+
+        return $this->__is_admin($uid) || $this->__is_project_member($uid);
+    }
+
+    private function __is_project_member($uid)
+    {
+        $fhc_db = $this->load->database('fhcomplete', true);
+
+        $fhc_db->select('mitarbeiter_uid', 'student_uid');
+        $fhc_db->from('fue.tbl_ressource r');
+        $fhc_db->join('fue.tbl_projekt_ressource pr', 'pr.ressource_id = r.ressource_id');
+        $fhc_db->where('pr.projekt_kurzbz', $_GET['projekt_kurzbz']);
+        $fhc_db->where('r.student_uid', $uid);
+        $fhc_db->or_where('r.mitarbeiter_uid', $uid);
+        $query = $fhc_db->get();
+
+        return $query->num_rows() > 0;
+    }
+
+    private function __is_admin($uid)
+    {
+        $berechtigungen = new benutzerberechtigung();
+        $berechtigungen->getBerechtigungen($uid);
+
+        return $berechtigungen->isBerechtigt('admin');
     }
 }
