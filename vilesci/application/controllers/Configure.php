@@ -1,5 +1,7 @@
 <?php
 defined('BASEPATH') || exit('No direct script access allowed');
+require_once('../../../include/authentication.class.php');
+require_once('../../../include/benutzerberechtigung.class.php');
 
 class Configure extends FHCOP_Controller
 {
@@ -21,6 +23,15 @@ class Configure extends FHCOP_Controller
      */
     public function index()
     {
+        $uid = (new authentication())->getUser();
+        $berechtigungen = new benutzerberechtigung();
+        $berechtigungen->getBerechtigungen($uid);
+        if(!$berechtigungen->isBerechtigt('admin'))
+        {
+            $this->_responseError('ACCESS_DENIED', $uid, 'User is not an admin.');
+            return;
+        }
+
         $prod_path = APPPATH.'config/openproject.json';
         $dev_path = APPPATH.'config/development/openproject.json';
 
