@@ -22,7 +22,7 @@ class Projekt_model extends FHCOP_Model
         $projekt = $this->__fetch("projekt", "projekt_kurzbz", $id);
         if (count($projekt) == 0)
         {
-            return $this->error("No project found with this projekt_kurzbz!");
+            return $this->__error("No project found with this projekt_kurzbz!");
         }
         $projekt = $projekt[0];
         $this->__fetchRes($projekt);
