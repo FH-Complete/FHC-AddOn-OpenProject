@@ -144,6 +144,11 @@ class Sync extends FHCOP_Controller
     }
 
 
+    /**
+     * Looks up if a user has permission to sync a project
+     *
+     * @return boolean
+     */
     private function __has_permission()
     {
         $uid = (new authentication())->getUser();
@@ -151,6 +156,11 @@ class Sync extends FHCOP_Controller
         return $this->__is_admin($uid) || $this->__is_project_member($uid);
     }
 
+    /**
+     * Returns if an user is a project member
+     *
+     * @return boolean
+     */
     private function __is_project_member($uid)
     {
         $fhc_db = $this->load->database('fhcomplete', true);
@@ -166,6 +176,11 @@ class Sync extends FHCOP_Controller
         return $query->num_rows() > 0;
     }
 
+    /**
+     * Returns if a user is an admim
+     *
+     * @return boolean
+     */
     private function __is_admin($uid)
     {
         $berechtigungen = new benutzerberechtigung();
