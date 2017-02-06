@@ -72,10 +72,6 @@ class Projekt_model extends FHCOP_Model
                 $res = $res[0];
                 $obj->ressource_id = $res->mitarbeiter_uid == null ? $res->student_uid == null ? null : $res->student_uid : $res->mitarbeiter_uid;
             }
-            else
-            {
-                return $this->__error("Error fetching Ressource with ressource_id ".$obj->ressource_id."! Result was expected.");
-            }
         }
     }
 

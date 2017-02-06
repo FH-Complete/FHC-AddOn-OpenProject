@@ -52,6 +52,9 @@ class FHCOP_Controller extends CI_Controller
 
             $this->rest->initialize($rest_config);
         }
+
+        $this->load->helper('language');
+        $this->lang->load('fhcop');
     }
 
     /**
@@ -71,19 +74,17 @@ class FHCOP_Controller extends CI_Controller
      *
      * @param int $errorCode Error code.
      * @param string $message Error message (what is wrong).
-     * @param string $description Error description (how to fix it).
      * @param int $statusCode HTTP status code.
      */
-    protected function _responseError($errorCode, $message, $description, $statusCode = 400)
+    protected function _responseError($errorCode, $message, $statusCode = 400)
     {
         $this->output->set_status_header($statusCode);
         $this->_responseJSON([
             'error' => [
-                'code' => $errorCode,
                 'value' => $message,
-                'description' => $description
+                'description' => $this->lang->line('fhcop_'.$errorCode)
             ],
-            'success' => false,
+            'success' => false
         ]);
     }
 }

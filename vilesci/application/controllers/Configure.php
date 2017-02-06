@@ -1,11 +1,12 @@
 <?php
+
 defined('BASEPATH') || exit('No direct script access allowed');
+
 require_once('../../../include/authentication.class.php');
 require_once('../../../include/benutzerberechtigung.class.php');
 
 class Configure extends FHCOP_Controller
 {
-
     private $permitted_post_parameter = ['url', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed', 'member', 'admin'];
 
     /**
@@ -26,9 +27,9 @@ class Configure extends FHCOP_Controller
         $uid = (new authentication())->getUser();
         $berechtigungen = new benutzerberechtigung();
         $berechtigungen->getBerechtigungen($uid);
-        if(!$berechtigungen->isBerechtigt('admin'))
+        if (!$berechtigungen->isBerechtigt('openproject/config'))
         {
-            $this->_responseError('ACCESS_DENIED', $uid, 'User is not an admin.');
+            $this->_responseError(FHCOP_ACCESS_DENIED, 'openproject/config');
             return;
         }
 

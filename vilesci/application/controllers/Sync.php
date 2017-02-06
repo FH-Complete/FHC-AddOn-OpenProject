@@ -27,11 +27,21 @@ class Sync extends FHCOP_Controller
      */
     public function index()
     {
-        if (!isset($_GET['projekt_kurzbz']))
+        $uid = (new authentication())->getUser();
+        $berechtigungen = new benutzerberechtigung();
+        $berechtigungen->getBerechtigungen($uid);
+        if (!$berechtigungen->isBerechtigt('openproject/sync'))
         {
-            $this->_responseError('MISSING_PARAM', 'projekt_kurzbz', 'GET Parameter is missing.');
+            $this->_responseError(FHCOP_ACCESS_DENIED, 'openproject/sync');
             return;
         }
+
+        if (!isset($_GET['projekt_kurzbz']))
+        {
+            $this->_responseError(FHCOP_MISSING_PARAM, 'projekt_kurzbz');
+            return;
+        }
+
         // http://fhcop-inf.technikum-wien.at/fhcomplete/addons/openproject/vilesci/index.dist.php/planner/FHC_Projekt/projekt/TestProjekt
         // /\-- JSON of TestProjekt
         // Load FHComplete Projekt
@@ -40,13 +50,7 @@ class Sync extends FHCOP_Controller
         // Check if FHComplete Projekt exists
         if (is_array($projekt))
         {
-            $this->_responseError('NOT_FOUND', 'projekt_kurzbz', $projekt['error']);
-            return;
-        }
-
-        if (!$this->__has_permission())
-        {
-            $this->_responseError('ACCESS_DENIED', '', 'You must be an admin or a project member of '.$_GET['projekt_kurzbz']);
+            $this->_responseError(FHCOP_NOT_FOUND, 'projekt_kurzbz');
             return;
         }
 
@@ -63,19 +67,14 @@ class Sync extends FHCOP_Controller
         // Exit if users are missings
         if (count($missing_users) !== 0 && !(isset($_GET['user_check']) && $_GET['user_check'] === 'false'))
         {
-            $this->_responseError(
-                'MISSING_USERS',
-                $missing_users,
-                'Not all Users have been created in OpenProject. Use GET Parameter \'user_check=false\' to ignore this error.',
-                409
-            );
+            $this->_responseError(FHCOP_MISSING_USERS, $missing_users, 409);
             return;
         }
 
         // Create OP Project
         if (($project_id = $this->ProjectModel->insert($projekt->projekt_kurzbz, $projekt->titel, $projekt->beschreibung)) === -1)
         {
-            $this->_responseError('CANNOT_CREATE', 'Project', 'Error when inserting Project, it might exist already.');
+            $this->_responseError(FHCOP_CANNOT_CREATE, $projekt->projekt_kurzbz);
             return;
         }
 
@@ -141,51 +140,5 @@ class Sync extends FHCOP_Controller
         }
 
         $this->_responseJSON(['success' => true]);
-    }
-
-
-    /**
-     * Looks up if a user has permission to sync a project
-     *
-     * @return boolean
-     */
-    private function __has_permission()
-    {
-        $uid = (new authentication())->getUser();
-
-        return $this->__is_admin($uid) || $this->__is_project_member($uid);
-    }
-
-    /**
-     * Returns if an user is a project member
-     *
-     * @return boolean
-     */
-    private function __is_project_member($uid)
-    {
-        $fhc_db = $this->load->database('fhcomplete', true);
-
-        $fhc_db->select('mitarbeiter_uid', 'student_uid');
-        $fhc_db->from('fue.tbl_ressource r');
-        $fhc_db->join('fue.tbl_projekt_ressource pr', 'pr.ressource_id = r.ressource_id');
-        $fhc_db->where('pr.projekt_kurzbz', $_GET['projekt_kurzbz']);
-        $fhc_db->where('r.student_uid', $uid);
-        $fhc_db->or_where('r.mitarbeiter_uid', $uid);
-        $query = $fhc_db->get();
-
-        return $query->num_rows() > 0;
-    }
-
-    /**
-     * Returns if a user is an admim
-     *
-     * @return boolean
-     */
-    private function __is_admin($uid)
-    {
-        $berechtigungen = new benutzerberechtigung();
-        $berechtigungen->getBerechtigungen($uid);
-
-        return $berechtigungen->isBerechtigt('admin');
     }
 }

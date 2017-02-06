@@ -83,3 +83,14 @@ defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+/*
+|--------------------------------------------------------------------------
+| FHCOP-AddOn Error Codes
+|--------------------------------------------------------------------------
+*/
+define('FHCOP_MISSING_PARAM', 0); 		// GET Parameter is missing
+define('FHCOP_NOT_FOUND', 1); 		    // Projekt with this projekt_kurzbz not found
+define('FHCOP_ACCESS_DENIED', 2); 		// You must be an admin or a project member of specified Projekt
+define('FHCOP_MISSING_USERS', 3); 		// Not all Users have been created in OpenProject. Use GET Parameter 'user_check=false' to ignore this error
+define('FHCOP_CANNOT_CREATE', 4); 		// Error when inserting Project, it might exist already
