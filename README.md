@@ -11,6 +11,8 @@ Wobei $Projekt$ der projekt_kurzbz in der Planner-Datenbank entspricht.
 ## Systemvoraussetzungen
 * Postgresql >= 9.4
 * PHP >= 5.4
+* FHComplete >= 3.2
+* OpenProject >= 6.1.4
 
 ## Installation
  * Addon in Ordner /addons/openproject/ entpacken
