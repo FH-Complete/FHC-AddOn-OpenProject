@@ -17,28 +17,60 @@
  *
  */
 require_once('../../../config/vilesci.config.inc.php');
-require_once('../../../include/functions.inc.php');
 require_once('../../../include/benutzerberechtigung.class.php');
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
-	<link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
-	<title>Template</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../../../skin/fhcomplete.css" type="text/css">
+    <link rel="stylesheet" href="../../../skin/vilesci.css" type="text/css">
+    <title>OP</title>
 </head>
 <body>
-<h1>Template</h1>';
+<h1>OpenProject Sync</h1>';
 
-$uid = get_uid();
+$uid = (new authentication())->getUser();
 $rechte = new benutzerberechtigung();
 $rechte->getBerechtigungen($uid);
 
 if(!$rechte->isBerechtigt('basis/addon'))
 {
-	die('Sie haben keine Berechtigung fuer diese Seite');
+    die('Sie haben keine Berechtigung fuer diese Seite');
 }
-echo 'Template Addon Vilesci Integration';
+
+echo '
+
+<div>
+    <p>This plugin can export a planner project to an OpenProject instance.</p>
+</div>
+
+<h2>Setup</h2>
+<ul>
+    <li><a href="./index.dist.php/Install">Install script</a>
+        <ul>
+            <li>Adds new permissions and grants them to admin.</li>
+        </ul>
+    </li>
+
+    <li><a href="./index.dist.php/Configure">Config page</a>
+        <ul>
+            <li>Set the url, api-key and mapping.</li>
+        </ul>
+    </li>
+</ul>
+
+<br>
+
+<h2>Use</h2>
+<ul>
+    <li><a href="./index.dist.php/Sync" target="_blank">Sync</a>
+        <ul>
+            <li>GET parameter "projekt_kurzbz" to specify fhcomplete project</li>
+            <li>GET parameter "user_check=false" to ignore missing users in OpenProject</li>
+        <ul>
+    </li>
+</ul>
+';
 ?>

@@ -18,12 +18,12 @@
  */
 
 // Name des Addons
-$addon_name = 'Template';
+$addon_name = 'OpenProject Sync';
 
 // Versionsnummer des Addons
-$addon_version = '0.01';
+$addon_version = '1.00';
 
 // FH-Complete Min-Version
-$fhcomplete_target_version = '2.2';
+$fhcomplete_target_version = '3.2';
 
 ?>
