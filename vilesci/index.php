@@ -51,6 +51,7 @@ echo '
     <li><a href="./index.dist.php/Install">Install script</a>
         <ul>
             <li>Adds new permissions and grants them to admin.</li>
+            <li>Initalizes the config in the database.</li>
         </ul>
     </li>
 
