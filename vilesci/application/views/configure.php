@@ -13,7 +13,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
     <form class="form-horizontal" method="post">
         <div class="form-group row">
             <label class="col-2 col-form-label">URL:</label>
-            <input class="form-control" name="url" type="text" value="<?php echo $config['server'] ?>">
+            <input class="form-control" name="server" type="text" value="<?php echo $config['server'] ?>">
         </div>
         <div class="form-group row">
             <label class="col-2 col-form-label">Api-Key:</label>

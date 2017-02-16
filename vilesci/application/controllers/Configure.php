@@ -7,7 +7,7 @@ require_once('../../../include/benutzerberechtigung.class.php');
 
 class Configure extends FHCOP_Controller
 {
-    private $permitted_post_parameter = ['url', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed', 'member', 'admin'];
+    private $permitted_post_param = ['server', 'api_key', 'Arbeitspaket', 'Milestone', 'Task', 'Projektphase', 'new', 'closed', 'member', 'admin'];
 
     /**
      * Configure constructor.
@@ -20,7 +20,7 @@ class Configure extends FHCOP_Controller
     }
 
     /**
-     *
+     * @return void
      */
     public function index()
     {
@@ -33,28 +33,11 @@ class Configure extends FHCOP_Controller
             return;
         }
 
-        $prod_path = APPPATH.'config/openproject.json';
-        $dev_path = APPPATH.'config/development/openproject.json';
-
-        if (file_exists($dev_path))
-        {
-            $config_path = $dev_path;
-        }
-        elseif (file_exists($prod_path))
-        {
-            $config_path = $prod_path;
-        }
-        else
-        {
-            echo 'No config file found found!';
-            return;
-        }
-
-        $config = json_decode(file_get_contents($config_path), true);
+        $config = $this->config->item('openproject');
 
         if (json_last_error() !== JSON_ERROR_NONE)
         {
-            echo 'Config file contains invalid JSON.';
+            echo 'Config contains invalid JSON.';
             return;
         }
 
@@ -69,7 +52,7 @@ class Configure extends FHCOP_Controller
         {
             foreach ($_POST as $key => $value)
             {
-                if (!in_array($key, $this->permitted_post_parameter))
+                if (!in_array($key, $this->permitted_post_param))
                 {
                     break;
                 }
@@ -98,7 +81,20 @@ class Configure extends FHCOP_Controller
                 }
             }
 
-            file_put_contents($config_path, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
+
+            $fhc = $this->load->database('fhcomplete', true);
+
+            $data = [
+                'uid' => 'admin',
+                'app' => 'FHCOP-AddOn',
+                'daten' => json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                'freigabe' => 'false'
+            ];
+
+            $fhc->where(array('uid' => 'admin', 'app' => 'FHCOP-AddOn'));
+            $fhc->update("system.tbl_appdaten", $data);
+            $fhc->close();
+
             $alert = '<div class="alert alert-success"> <strong>Success!</strong> Your settings have been saved!</div>';
         }
 
@@ -121,10 +117,15 @@ class Configure extends FHCOP_Controller
      */
     private function __getTypes()
     {
-        $types = [];
-
         $result = $this->rest->get('types');
+
+        if (gettype($result) !== 'object')
+        {
+            return [];
+        }
+
         $types_objects = $result->_embedded->elements;
+        $types = [];
 
         foreach ($types_objects as $type_object)
         {
@@ -144,8 +145,13 @@ class Configure extends FHCOP_Controller
     private function __getStatuses()
     {
         $result = $this->rest->get('statuses');
-        $status_objects = $result->_embedded->elements;
 
+        if (gettype($result) !== 'object')
+        {
+            return [];
+        }
+
+        $status_objects = $result->_embedded->elements;
         $statuses = [];
 
         foreach ($status_objects as $status_object)

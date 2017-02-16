@@ -63,7 +63,7 @@ class Project_model extends CI_Model
         }
 
         return $success ? $this->project_id : -1;
-     }
+    }
 
     /**
      * Adds a project to a user.
@@ -113,7 +113,7 @@ class Project_model extends CI_Model
      */
     private function __enable_modules($project_id)
     {
-        $modules = $this->config->item('openproject')['default_modules'];
+        $modules = $this->config->item('default_modules');
 
         // TODO insert_batch() ?
         foreach ($modules as $module)

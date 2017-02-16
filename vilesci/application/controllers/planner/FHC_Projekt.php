@@ -14,7 +14,9 @@ class FHC_Projekt extends FHCOP_Controller
     }
 
     /**
-     * @param string $projekt_kurzbz 'projekt_kurzbz' des gewünschten Projekts
+     * Zeigt das FHComplete Planner projekt an.
+     *
+     * @param string $projekt_kurzbz Die 'projekt_kurzbz' des gewünschten Projekts.
      */
     public function projekt($projekt_kurzbz)
     {

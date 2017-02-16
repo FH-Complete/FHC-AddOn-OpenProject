@@ -76,7 +76,7 @@ class Workpackage_model extends FHCOP_Model
             return;
         }
 
-        $api_path = $this->config->item('openproject')['api_path'];
+        $api_path = $this->config->item('api_path');
 
         $data = [
             "lockVersion" => $workPackage->lockVersion,

@@ -192,7 +192,7 @@ class Workpackage
      */
     public function setParent($id)
     {
-        $api_path = $this->CI->config->item('openproject')['api_path'];
+        $api_path = $this->CI->config->item('api_path');
 
         $this->parent = $id;
         $this->parentResource = "{$api_path}work_packages/{$id}";

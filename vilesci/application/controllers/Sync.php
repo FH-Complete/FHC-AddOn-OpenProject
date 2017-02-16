@@ -24,6 +24,8 @@ class Sync extends FHCOP_Controller
 
     /**
      * Default functions.
+     *
+     * @return void
      */
     public function index()
     {
