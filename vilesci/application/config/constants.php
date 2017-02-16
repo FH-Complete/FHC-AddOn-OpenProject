@@ -94,3 +94,4 @@ define('FHCOP_NOT_FOUND', 1); 		    // Projekt with this projekt_kurzbz not foun
 define('FHCOP_ACCESS_DENIED', 2); 		// You must be an admin or a project member of specified Projekt
 define('FHCOP_MISSING_USERS', 3); 		// Not all Users have been created in OpenProject. Use GET Parameter 'user_check=false' to ignore this error
 define('FHCOP_CANNOT_CREATE', 4); 		// Error when inserting Project, it might exist already
+define('FHCOP_NO_CONFIG', 5); 		// Error when inserting Project, it might exist already
